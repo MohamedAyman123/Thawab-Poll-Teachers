@@ -8,6 +8,7 @@ export interface LotteryConfig {
   nameEn: string;
   colorTheme: ColorTheme;
   storageKey: string;
+  enableNasheed: boolean;
 }
 
 export interface Participant {

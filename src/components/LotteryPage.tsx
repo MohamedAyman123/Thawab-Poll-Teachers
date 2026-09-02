@@ -64,6 +64,7 @@ const LotteryPage: React.FC<LotteryPageProps> = ({ lotteryId }) => {
           onRemoveWinnerCenter={handleRemoveCenter}
           colorTheme={config.colorTheme}
           title={config.nameAr}
+          enableNasheed={config.enableNasheed}
         />
       )}
     </div>

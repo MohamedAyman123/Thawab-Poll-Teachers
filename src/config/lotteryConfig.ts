@@ -7,6 +7,7 @@ export const LOTTERY_CONFIGS: Record<LotteryId, LotteryConfig> = {
     nameEn: 'Umrah for Students',
     colorTheme: 'emerald',
     storageKey: 'thawab_lottery_umrah',
+    enableNasheed: true,
   },
   'male-prizes': {
     id: 'male-prizes',
@@ -14,6 +15,7 @@ export const LOTTERY_CONFIGS: Record<LotteryId, LotteryConfig> = {
     nameEn: 'Male Student Prizes',
     colorTheme: 'blue',
     storageKey: 'thawab_lottery_male',
+    enableNasheed: false,
   },
   'female-prizes': {
     id: 'female-prizes',
@@ -21,6 +23,7 @@ export const LOTTERY_CONFIGS: Record<LotteryId, LotteryConfig> = {
     nameEn: 'Female Student Prizes',
     colorTheme: 'purple',
     storageKey: 'thawab_lottery_female',
+    enableNasheed: false,
   },
   'teacher-lottery': {
     id: 'teacher-lottery',
@@ -28,6 +31,7 @@ export const LOTTERY_CONFIGS: Record<LotteryId, LotteryConfig> = {
     nameEn: 'Teacher Lottery',
     colorTheme: 'orange',
     storageKey: 'thawab_lottery_teacher',
+    enableNasheed: true,
   },
 };
 

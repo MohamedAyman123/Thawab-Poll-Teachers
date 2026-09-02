@@ -15,6 +15,7 @@ interface LotteryViewProps {
   onRemoveWinnerCenter: (winner: Participant) => void;
   colorTheme: ColorTheme;
   title: string;
+  enableNasheed: boolean;
 }
 
 const ITEM_HEIGHT = 75;
@@ -42,7 +43,8 @@ const LotteryView: React.FC<LotteryViewProps> = ({
   onBack,
   onRemoveWinnerCenter,
   colorTheme,
-  title
+  title,
+  enableNasheed
 }) => {
   const theme = getThemeClasses(colorTheme);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -143,7 +145,7 @@ const LotteryView: React.FC<LotteryViewProps> = ({
       style={{ backgroundImage: `url(${base}background.png)` }}
     >
       <audio ref={spinSoundRef} src={`${base}sounds/wheel.mp3`} loop preload="auto" />
-      <audio ref={nasheedRef} src={`${base}sounds/nasheed.mp3`} preload="auto" />
+      {enableNasheed && <audio ref={nasheedRef} src={`${base}sounds/nasheed.mp3`} preload="auto" />}
       <audio ref={applauseRef} src={`${base}sounds/applause.mp3`} />
 
       <div className="w-full flex justify-between items-start px-16 mb-6 z-10">
@@ -190,23 +192,25 @@ const LotteryView: React.FC<LotteryViewProps> = ({
           <button onClick={onBack} className={theme.backText}>
             تعديل البيانات
           </button>
-          <button
-            onClick={() => {
-              if (!nasheedRef.current) return;
-              if (nasheedRef.current.paused) {
-                nasheedRef.current.play().catch((error) => {
-                  console.error("فشل تشغيل النشيد:", error);
-                });
-                setIsNasheedPlaying(true);
-              } else {
-                nasheedRef.current.pause();
-                setIsNasheedPlaying(false);
-              }
-            }}
-            className={theme.nasheedButton}
-          >
-            {isNasheedPlaying ? "⏸ إيقاف النشيد" : "▶ تشغيل النشيد"}
-          </button>
+          {enableNasheed && (
+            <button
+              onClick={() => {
+                if (!nasheedRef.current) return;
+                if (nasheedRef.current.paused) {
+                  nasheedRef.current.play().catch((error) => {
+                    console.error("فشل تشغيل النشيد:", error);
+                  });
+                  setIsNasheedPlaying(true);
+                } else {
+                  nasheedRef.current.pause();
+                  setIsNasheedPlaying(false);
+                }
+              }}
+              className={theme.nasheedButton}
+            >
+              {isNasheedPlaying ? "⏸ إيقاف النشيد" : "▶ تشغيل النشيد"}
+            </button>
+          )}
         </div>
 
         {/* Reel */}
@@ -246,7 +250,7 @@ const LotteryView: React.FC<LotteryViewProps> = ({
               onClick={() => {
                 if (!winner) return;
                 setShowWinner(true);
-                if (nasheedRef.current) {
+                if (enableNasheed && nasheedRef.current) {
                   nasheedRef.current.currentTime = 0;
                   nasheedRef.current.volume = 1;
                   nasheedRef.current.play().catch((error) => {
