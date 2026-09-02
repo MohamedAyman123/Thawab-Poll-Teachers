@@ -17,13 +17,11 @@ interface LotteryViewProps {
   title: string;
 }
 
-/* ------------------ Constants ------------------ */
 const ITEM_HEIGHT = 75;
 const SPIN_DURATION = 4000;
 const SNAP_THRESHOLD = 0.9;
 const VIEWPORT_CENTER_OFFSET = 275 - ITEM_HEIGHT / 2;
 
-/* ------------------ Secure Random ------------------ */
 function secureRandomInt(max: number): number {
   const array = new Uint32Array(1);
   window.crypto.getRandomValues(array);
@@ -53,12 +51,6 @@ const LotteryView: React.FC<LotteryViewProps> = ({
   const [displayList, setDisplayList] = useState<Participant[]>([]);
   const [isNasheedPlaying, setIsNasheedPlaying] = useState(false);
 
-  const remainingCenters = new Set(
-    participants
-      .map(p => p.center)
-      .filter(Boolean)
-  ).size;
-
   const reelRef = useRef<HTMLDivElement>(null);
   const lastOffsetRef = useRef(0);
 
@@ -66,7 +58,6 @@ const LotteryView: React.FC<LotteryViewProps> = ({
   const applauseRef = useRef<HTMLAudioElement | null>(null);
   const nasheedRef = useRef<HTMLAudioElement | null>(null);
 
-  /* ------------------ Build Display List ------------------ */
   useEffect(() => {
     if (!participants.length) return;
 
@@ -81,7 +72,6 @@ const LotteryView: React.FC<LotteryViewProps> = ({
     setDisplayList(list);
   }, [participants]);
 
-  /* ------------------ Spin Logic ------------------ */
   const spin = useCallback(() => {
     if (isSpinning || participants.length === 0) return;
 
@@ -89,36 +79,28 @@ const LotteryView: React.FC<LotteryViewProps> = ({
     setShowWinner(false);
     setWinner(null);
 
-    // صوت العجلة
     if (spinSoundRef.current) {
       spinSoundRef.current.currentTime = 0;
       spinSoundRef.current.volume = 1;
-
       const playPromise = spinSoundRef.current.play();
-
       if (playPromise !== undefined) {
         playPromise.catch((error) => {
           console.error("فشل تشغيل صوت السحب:", error);
         });
       }
     }
+
     const shuffled = shuffleArray(participants);
     const winnerIndex = secureRandomInt(shuffled.length);
     const selectedWinner = shuffled[winnerIndex];
 
-    const baseIndex =
-      displayList.length - shuffled.length + winnerIndex;
-
-    const targetOffset =
-      baseIndex * ITEM_HEIGHT - VIEWPORT_CENTER_OFFSET;
+    const baseIndex = displayList.length - shuffled.length + winnerIndex;
+    const targetOffset = baseIndex * ITEM_HEIGHT - VIEWPORT_CENTER_OFFSET;
 
     const start = performance.now();
 
     const animate = (now: number) => {
-      const progress = Math.min(
-        (now - start) / SPIN_DURATION,
-        1
-      );
+      const progress = Math.min((now - start) / SPIN_DURATION, 1);
 
       let offset: number;
 
@@ -127,17 +109,12 @@ const LotteryView: React.FC<LotteryViewProps> = ({
         offset = targetOffset * local * local;
         lastOffsetRef.current = offset;
       } else {
-        const snap =
-          (progress - SNAP_THRESHOLD) /
-          (1 - SNAP_THRESHOLD);
-        offset =
-          lastOffsetRef.current +
-          (targetOffset - lastOffsetRef.current) * snap;
+        const snap = (progress - SNAP_THRESHOLD) / (1 - SNAP_THRESHOLD);
+        offset = lastOffsetRef.current + (targetOffset - lastOffsetRef.current) * snap;
       }
 
       if (reelRef.current) {
-        reelRef.current.style.transform =
-          `translateY(-${offset}px)`;
+        reelRef.current.style.transform = `translateY(-${offset}px)`;
       }
 
       if (progress < 1) {
@@ -146,7 +123,6 @@ const LotteryView: React.FC<LotteryViewProps> = ({
         setIsSpinning(false);
         setWinner(selectedWinner);
 
-        // إيقاف صوت العجلة
         if (spinSoundRef.current) {
           spinSoundRef.current.pause();
           spinSoundRef.current.currentTime = 0;
@@ -157,39 +133,22 @@ const LotteryView: React.FC<LotteryViewProps> = ({
     requestAnimationFrame(animate);
   }, [isSpinning, participants, displayList]);
 
-  const activeCentersCount = new Set(
-    participants.map(p => p.center)
-  ).size;
+  const activeCentersCount = new Set(participants.map(p => p.center)).size;
 
-  /* ------------------ UI ------------------ */
+  const activeParticipantsCount = participants.length;
+
   return (
     <div
       className="relative min-h-screen w-full flex flex-col items-center overflow-hidden font-['Cairo'] bg-cover bg-center"
       style={{ backgroundImage: `url(${base}background.png)` }}
     >
-      {/* أصوات */}
-      <audio
-        ref={spinSoundRef}
-        src={`${base}sounds/wheel.mp3`}
-        loop
-        preload="auto"
-      />
-      <audio
-        ref={nasheedRef}
-        src={`${base}sounds/nasheed.mp3`}
-        preload="auto"
-      />
+      <audio ref={spinSoundRef} src={`${base}sounds/wheel.mp3`} loop preload="auto" />
+      <audio ref={nasheedRef} src={`${base}sounds/nasheed.mp3`} preload="auto" />
       <audio ref={applauseRef} src={`${base}sounds/applause.mp3`} />
 
-      {/* Header */}
       <div className="w-full flex justify-between items-start px-16 mb-6 z-10">
         <div className="mt-4">
-          <h1 className="text-4xl font-black text-white">
-            {title}
-          </h1>
-          <h2 className="text-3xl font-black text-white text-center mt-1">
-            {title}
-          </h2>
+          <h1 className="text-4xl font-black text-white">{title}</h1>
         </div>
         <img
           src={`${base}new-logo.png`}
@@ -212,9 +171,9 @@ const LotteryView: React.FC<LotteryViewProps> = ({
       <div className="relative flex-1 w-full max-w-7xl flex items-center justify-between z-10 bg-white/25 backdrop-blur-sm rounded-[2.5rem] border border-white/40 shadow-2xl px-10 py-10">
         <div className="absolute top-6 right-8 flex gap-4">
           <span className="bg-red-50 text-red-600 px-4 py-2 rounded-full text-lg font-black shadow-md">
-            الأسماء: {participants.length}
+            الأسماء: {activeParticipantsCount}
           </span>
-          <span className={`${theme.bg100} ${theme.text800} px-4 py-2 rounded-full text-lg font-black shadow-md`}>
+          <span className={theme.centersBadge}>
             المراكز المتبقية: {activeCentersCount}
           </span>
         </div>
@@ -224,17 +183,16 @@ const LotteryView: React.FC<LotteryViewProps> = ({
           <button
             onClick={spin}
             disabled={isSpinning}
-            className={`w-40 h-40 rounded-full bg-gradient-to-br ${theme.gradient} text-white font-black text-4xl shadow-2xl border-4 border-white/30 hover:scale-105 transition-transform disabled:opacity-40`}
+            className={theme.spinButton}
           >
             سحب
           </button>
-          <button onClick={onBack} className={`${theme.text700} font-bold text-xs`}>
+          <button onClick={onBack} className={theme.backText}>
             تعديل البيانات
           </button>
           <button
             onClick={() => {
               if (!nasheedRef.current) return;
-
               if (nasheedRef.current.paused) {
                 nasheedRef.current.play().catch((error) => {
                   console.error("فشل تشغيل النشيد:", error);
@@ -245,7 +203,7 @@ const LotteryView: React.FC<LotteryViewProps> = ({
                 setIsNasheedPlaying(false);
               }
             }}
-            className={`mt-2 px-5 py-2 rounded-full bg-white/80 ${theme.text900} font-black shadow-lg hover:scale-105 transition-transform`}
+            className={theme.nasheedButton}
           >
             {isNasheedPlaying ? "⏸ إيقاف النشيد" : "▶ تشغيل النشيد"}
           </button>
@@ -253,18 +211,14 @@ const LotteryView: React.FC<LotteryViewProps> = ({
 
         {/* Reel */}
         <div className="relative flex-1 max-h-[550px] overflow-hidden">
-          <div className={`absolute inset-x-0 top-1/2 -translate-y-1/2 z-20 w-full h-28 border-[8px] rounded-[3rem] ${theme.border500} bg-white flex items-center justify-center`}>
+          <div className={`absolute inset-x-0 top-1/2 -translate-y-1/2 z-20 w-full h-28 border-[8px] rounded-[3rem] ${theme.reelBorder} bg-white flex items-center justify-center`}>
             {showWinner && winner ? (
               <div className="text-center winner-pop">
-                <div className={`text-4xl md:text-5xl font-black ${theme.text900}`}>
-                  {winner.name}
-                </div>
-                <div className={`text-2xl md:text-3xl font-black ${theme.text700} mt-2`}>
-                  {winner.center}
-                </div>
+                <div className={theme.winnerText}>{winner.name}</div>
+                <div className={theme.winnerCenterText}>{winner.center}</div>
               </div>
             ) : (
-              <span className={`${theme.text600} text-3xl font-black`}>
+              <span className={theme.spinnerText}>
                 {isSpinning ? 'جاري الاختيار...' : '؟'}
               </span>
             )}
@@ -277,12 +231,8 @@ const LotteryView: React.FC<LotteryViewProps> = ({
                   key={i}
                   className="h-[75px] flex flex-col items-center justify-center opacity-50"
                 >
-                  <span className={`text-3xl font-black ${theme.text900}/80`}>
-                    {p.name}
-                  </span>
-                  <span className={`text-[8px] font-bold ${theme.text900}`}>
-                    {p.center}
-                  </span>
+                  <span className={theme.reelItemText}>{p.name}</span>
+                  <span className={theme.reelItemCenter}>{p.center}</span>
                 </div>
               ))}
             </div>
@@ -296,11 +246,9 @@ const LotteryView: React.FC<LotteryViewProps> = ({
               onClick={() => {
                 if (!winner) return;
                 setShowWinner(true);
-
                 if (nasheedRef.current) {
                   nasheedRef.current.currentTime = 0;
                   nasheedRef.current.volume = 1;
-
                   nasheedRef.current.play().catch((error) => {
                     console.error("فشل تشغيل النشيد:", error);
                   });
@@ -308,7 +256,7 @@ const LotteryView: React.FC<LotteryViewProps> = ({
                 }
               }}
               disabled={!winner || isSpinning}
-              className={`w-40 h-40 rounded-full bg-gradient-to-br ${theme.bg800} to-${theme.bg900.replace('bg-', '')} text-white font-black text-4xl shadow-2xl border-4 border-white/20 hover:scale-105 transition-transform disabled:opacity-40`}
+              className={theme.revealButton}
             >
               كشف
             </button>

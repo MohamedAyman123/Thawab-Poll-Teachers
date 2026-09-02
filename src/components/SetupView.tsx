@@ -20,7 +20,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, col
         if (!centersMap[p.center]) centersMap[p.center] = [];
         centersMap[p.center].push(p.name);
       });
-      
+
       const text = Object.entries(centersMap)
         .map(([center, names]) => `[${center}]\n${names.join('\n')}`)
         .join('\n---\n');
@@ -32,7 +32,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, col
     e.preventDefault();
     const result: Participant[] = [];
     const blocks = inputValue.split('---');
-    
+
     blocks.forEach(block => {
       const lines = block.trim().split('\n').map(l => l.trim()).filter(l => l !== '');
       if (lines.length > 0) {
@@ -61,11 +61,11 @@ const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, col
   };
 
   return (
-    <div className={`${theme.bg50}/95 backdrop-blur-md p-8 rounded-[2.5rem] shadow-2xl w-full max-w-3xl border ${theme.border200} font-['Cairo'] mx-auto mt-8`}>
+    <div className={theme.setupBg}>
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className={`text-4xl font-black ${theme.text900} tracking-tighter`}>{title}</h1>
-          <h2 className={`text-xl font-bold ${theme.text700} mt-2`}>إعداد المراكز</h2>
+          <h1 className={theme.titleText}>{title}</h1>
+          <h2 className={theme.subtitleText}>إعداد المراكز</h2>
         </div>
         <div className="w-24 h-24 relative flex items-center justify-center">
            <div className="flex flex-col items-center">
@@ -74,28 +74,28 @@ const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, col
         </div>
       </div>
 
-      <div className={`${theme.bg100}/50 p-4 rounded-2xl mb-6 text-sm ${theme.text800} leading-relaxed border ${theme.border200}/50`}>
-        <p className={`font-bold mb-2 ${theme.text900}`}>طريقة الإدخال:</p>
-        <code className={`block bg-white/50 p-2 rounded-lg text-xs font-mono ${theme.text700}`}>
+      <div className={theme.infoBg}>
+        <p className={theme.infoTitleText}>طريقة الإدخال:</p>
+        <code className={theme.infoCodeText}>
           [اسم المركز]<br/>
           الاسم الأول<br/>
           الاسم الثاني<br/>
           ---
         </code>
       </div>
-      
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <textarea
-          className={`w-full h-80 p-6 border-2 ${theme.border200} rounded-3xl focus:${theme.border500} focus:ring-0 transition-all text-right resize-none font-medium text-lg shadow-inner bg-white/80`}
+          className={`w-full h-80 p-6 ${theme.textareaBorder} transition-all text-right resize-none font-medium text-lg shadow-inner bg-white/80`}
           placeholder="اكتب المراكز والأسماء هنا..."
           dir="rtl"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />
-        
+
         <button
           type="submit"
-          className={`w-full bg-gradient-to-r ${theme.gradient} hover:${theme.gradientHover} text-white font-black py-4 px-8 rounded-2xl transition-all shadow-xl active:scale-95 text-xl`}
+          className={`w-full bg-gradient-to-r ${theme.buttonGradient} ${theme.buttonHoverGradient} text-white font-black py-4 px-8 rounded-2xl transition-all shadow-xl active:scale-95 text-xl`}
         >
           اعتماد وحفظ القائمة
         </button>
