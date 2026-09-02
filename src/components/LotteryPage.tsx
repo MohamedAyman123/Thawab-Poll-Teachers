@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LotteryId, Participant, LotteryView } from '../types/lottery';
+import { LotteryId, Participant, LotteryView as LotteryViewType } from '../types/lottery';
 import { LOTTERY_CONFIGS, getThemeClasses } from '../config/lotteryConfig';
 import SetupView from './SetupView';
 import LotteryView from './LotteryView';
@@ -12,7 +12,7 @@ const LotteryPage: React.FC<LotteryPageProps> = ({ lotteryId }) => {
   const config = LOTTERY_CONFIGS[lotteryId];
   const theme = getThemeClasses(config.colorTheme);
 
-  const [view, setView] = useState<LotteryView>('setup');
+  const [view, setView] = useState<LotteryViewType>('setup');
   const [participants, setParticipants] = useState<Participant[]>([]);
 
   // Load data from localStorage on mount
