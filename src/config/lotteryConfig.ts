@@ -29,9 +29,19 @@ export const LOTTERY_CONFIGS: Record<LotteryId, LotteryConfig> = {
     id: 'teacher-lottery',
     nameAr: 'سحب المعلمين',
     nameEn: 'Teacher Lottery',
+    headerNameAr: 'ســحـــب عــــمـــرة',
+    subtitleAr: 'المعلمين والمعلمات',
     colorTheme: 'orange',
     storageKey: 'thawab_lottery_teacher',
     enableNasheed: true,
+    centerFilterOptions: [
+      'مركز الفردوس',
+      'مركز الفتح المبين',
+      'مركز أنصار السنة',
+      'مركز شبل الإيمان',
+      'مركز أبو شوك',
+      'جمعية علوم القرآن بالكوبانية',
+    ],
   },
 };
 

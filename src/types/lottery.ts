@@ -6,9 +6,12 @@ export interface LotteryConfig {
   id: LotteryId;
   nameAr: string;
   nameEn: string;
+  headerNameAr?: string;
+  subtitleAr?: string;
   colorTheme: ColorTheme;
   storageKey: string;
   enableNasheed: boolean;
+  centerFilterOptions?: string[];
 }
 
 export interface Participant {

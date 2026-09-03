@@ -48,6 +48,8 @@ const LotteryPage: React.FC<LotteryPageProps> = ({ lotteryId }) => {
     setView('setup');
   };
 
+  const headerTitle = config.headerNameAr || config.nameAr;
+
   return (
     <div className="min-h-screen pt-20">
       {view === 'setup' ? (
@@ -55,7 +57,8 @@ const LotteryPage: React.FC<LotteryPageProps> = ({ lotteryId }) => {
           onStart={handleStartLottery}
           initialParticipants={participants}
           colorTheme={config.colorTheme}
-          title={config.nameAr}
+          title={headerTitle}
+          subtitle={config.subtitleAr}
         />
       ) : (
         <LotteryView
@@ -63,8 +66,10 @@ const LotteryPage: React.FC<LotteryPageProps> = ({ lotteryId }) => {
           onBack={handleBackToSetup}
           onRemoveWinnerCenter={handleRemoveCenter}
           colorTheme={config.colorTheme}
-          title={config.nameAr}
+          title={headerTitle}
+          subtitle={config.subtitleAr}
           enableNasheed={config.enableNasheed}
+          centerFilterOptions={config.centerFilterOptions}
         />
       )}
     </div>

@@ -7,9 +7,10 @@ interface SetupViewProps {
   initialParticipants: Participant[];
   colorTheme: ColorTheme;
   title: string;
+  subtitle?: string;
 }
 
-const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, colorTheme, title }) => {
+const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, colorTheme, title, subtitle }) => {
   const theme = getThemeClasses(colorTheme);
   const [inputValue, setInputValue] = useState('');
 
@@ -65,7 +66,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, col
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className={theme.titleText}>{title}</h1>
-          <h2 className={theme.subtitleText}>إعداد المراكز</h2>
+          <h2 className={theme.subtitleText}>{subtitle || 'إعداد المراكز'}</h2>
         </div>
         <div className="w-24 h-24 relative flex items-center justify-center">
            <div className="flex flex-col items-center">
