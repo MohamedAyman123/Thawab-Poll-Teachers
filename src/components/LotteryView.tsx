@@ -13,6 +13,8 @@ interface LotteryViewProps {
   participants: Participant[];
   onBack: () => void;
   onRemoveWinnerCenter: (winner: Participant) => void;
+  onRemoveWinner?: (winner: Participant) => void;
+  singleCenter: boolean;
   colorTheme: ColorTheme;
   title: string;
   subtitle?: string;
@@ -44,6 +46,8 @@ const LotteryView: React.FC<LotteryViewProps> = ({
   participants,
   onBack,
   onRemoveWinnerCenter,
+  onRemoveWinner,
+  singleCenter,
   colorTheme,
   title,
   subtitle,
@@ -283,13 +287,17 @@ const LotteryView: React.FC<LotteryViewProps> = ({
               <button
                 onClick={() => {
                   if (!winner) return;
-                  onRemoveWinnerCenter(winner);
+                  if (singleCenter) {
+                    onRemoveWinner?.(winner);
+                  } else {
+                    onRemoveWinnerCenter(winner);
+                  }
                   setWinner(null);
                   setShowWinner(false);
                 }}
                 className="w-36 h-36 rounded-full bg-gradient-to-br from-orange-500 to-red-600 text-white font-black text-sm"
               >
-                تأكيد حذف المركز
+                {singleCenter ? 'تأكيد حذف الاسم' : 'تأكيد حذف المركز'}
               </button>
             )}
           </div>

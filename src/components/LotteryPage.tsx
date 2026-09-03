@@ -46,6 +46,12 @@ const LotteryPage: React.FC<LotteryPageProps> = ({ lotteryId }) => {
     localStorage.setItem(config.storageKey, JSON.stringify(updated));
   };
 
+  const handleRemoveWinner = (winner: Participant) => {
+    const updated = participants.filter(p => p.name !== winner.name || p.center !== winner.center);
+    setParticipants(updated);
+    localStorage.setItem(config.storageKey, JSON.stringify(updated));
+  };
+
   const handleBackToSetup = () => {
     setView('setup');
   };
@@ -75,6 +81,8 @@ const LotteryPage: React.FC<LotteryPageProps> = ({ lotteryId }) => {
           participants={drawParticipants}
           onBack={handleBackToSetup}
           onRemoveWinnerCenter={handleRemoveCenter}
+          onRemoveWinner={handleRemoveWinner}
+          singleCenter={selectedCenter !== 'all'}
           colorTheme={config.colorTheme}
           title={headerTitle}
           subtitle={config.subtitleAr}
