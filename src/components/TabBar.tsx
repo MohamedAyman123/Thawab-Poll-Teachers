@@ -41,13 +41,8 @@ const TabBar: React.FC<TabBarProps> = ({ activeTab, onTabChange }) => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <img
-              src={`${import.meta.env.BASE_URL}new-logo.png`}
-              alt="Logo"
-              className="w-10 h-10"
-            />
             <span className="text-lg font-black text-gray-800 hidden sm:block">
-              مؤسسة ثواب
+              القرآن يجمعنا
             </span>
           </div>
 

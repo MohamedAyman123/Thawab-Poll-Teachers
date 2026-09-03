@@ -170,7 +170,7 @@ const LotteryView: React.FC<LotteryViewProps> = ({
         </div>
       )}
 
-      <div className="relative flex-1 w-full max-w-7xl flex items-center justify-between z-10 bg-white/25 backdrop-blur-sm rounded-[2.5rem] border border-white/40 shadow-2xl px-10 py-10">
+      <div className="relative flex-1 w-full max-w-7xl flex items-stretch justify-between z-10 bg-white/25 backdrop-blur-sm rounded-[2.5rem] border border-white/40 shadow-2xl px-10 py-10">
         <div className="absolute top-6 right-8 flex gap-4">
           <span className="bg-red-50 text-red-600 px-4 py-2 rounded-full text-lg font-black shadow-md">
             الأسماء: {activeParticipantsCount}
