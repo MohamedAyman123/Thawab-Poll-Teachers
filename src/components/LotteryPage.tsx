@@ -14,6 +14,7 @@ const LotteryPage: React.FC<LotteryPageProps> = ({ lotteryId }) => {
 
   const [view, setView] = useState<LotteryViewType>('setup');
   const [participants, setParticipants] = useState<Participant[]>([]);
+  const [selectedCenter, setSelectedCenter] = useState<string>('all');
 
   // Load data from localStorage on mount
   useEffect(() => {
@@ -32,8 +33,9 @@ const LotteryPage: React.FC<LotteryPageProps> = ({ lotteryId }) => {
     }
   }, [config.storageKey]);
 
-  const handleStartLottery = (newParticipants: Participant[]) => {
+  const handleStartLottery = (newParticipants: Participant[], center: string) => {
     setParticipants(newParticipants);
+    setSelectedCenter(center);
     localStorage.setItem(config.storageKey, JSON.stringify(newParticipants));
     setView('lottery');
   };
@@ -50,6 +52,13 @@ const LotteryPage: React.FC<LotteryPageProps> = ({ lotteryId }) => {
 
   const headerTitle = config.headerNameAr || config.nameAr;
 
+  // Participants used in the draw, filtered by the center chosen on setup
+  const drawParticipants = selectedCenter === 'all'
+    ? participants
+    : participants.filter(p => p.center === selectedCenter);
+
+  const drawCenterLabel = selectedCenter === 'all' ? 'كل المراكز' : selectedCenter;
+
   return (
     <div className="min-h-screen pt-20">
       {view === 'setup' ? (
@@ -59,17 +68,18 @@ const LotteryPage: React.FC<LotteryPageProps> = ({ lotteryId }) => {
           colorTheme={config.colorTheme}
           title={headerTitle}
           subtitle={config.subtitleAr}
+          centerFilterOptions={config.centerFilterOptions}
         />
       ) : (
         <LotteryView
-          participants={participants}
+          participants={drawParticipants}
           onBack={handleBackToSetup}
           onRemoveWinnerCenter={handleRemoveCenter}
           colorTheme={config.colorTheme}
           title={headerTitle}
           subtitle={config.subtitleAr}
           enableNasheed={config.enableNasheed}
-          centerFilterOptions={config.centerFilterOptions}
+          drawCenterLabel={drawCenterLabel}
         />
       )}
     </div>

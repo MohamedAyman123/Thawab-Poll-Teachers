@@ -3,16 +3,22 @@ import { Participant, ColorTheme } from '../types/lottery';
 import { getThemeClasses } from '../config/lotteryConfig';
 
 interface SetupViewProps {
-  onStart: (participants: Participant[]) => void;
+  onStart: (participants: Participant[], center: string) => void;
   initialParticipants: Participant[];
   colorTheme: ColorTheme;
   title: string;
   subtitle?: string;
+  centerFilterOptions?: string[];
 }
 
-const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, colorTheme, title, subtitle }) => {
+const ALL_CENTERS_VALUE = 'all';
+
+const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, colorTheme, title, subtitle, centerFilterOptions }) => {
   const theme = getThemeClasses(colorTheme);
+  const hasCenterFilter = !!centerFilterOptions && centerFilterOptions.length > 0;
   const [inputValue, setInputValue] = useState('');
+  const [selectedCenter, setSelectedCenter] = useState<string>(ALL_CENTERS_VALUE);
+  const [isPanelOpen, setIsPanelOpen] = useState(true);
 
   useEffect(() => {
     if (initialParticipants.length > 0) {
@@ -58,8 +64,10 @@ const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, col
       return;
     }
 
-    onStart(result);
+    onStart(result, selectedCenter);
   };
+
+  const selectedCenterLabel = selectedCenter === ALL_CENTERS_VALUE ? 'كل المراكز' : selectedCenter;
 
   return (
     <div className={theme.setupBg}>
@@ -84,6 +92,56 @@ const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, col
           ---
         </code>
       </div>
+
+      {hasCenterFilter && (
+        <div className={`${theme.infoBorder} border bg-white/60 rounded-2xl mb-6 overflow-hidden`}>
+          <button
+            type="button"
+            onClick={() => setIsPanelOpen(!isPanelOpen)}
+            className={`w-full flex items-center justify-between px-5 py-4 ${theme.infoTitleText} text-lg`}
+          >
+            <span className="flex items-center gap-3">
+              <span className={`inline-block transition-transform duration-300 ${isPanelOpen ? '' : '-rotate-90'}`}>▼</span>
+              اختيار المركز للسحب
+            </span>
+            <span className={`px-4 py-1 rounded-full text-base font-black bg-gradient-to-r ${theme.buttonGradient} text-white`}>
+              {selectedCenterLabel}
+            </span>
+          </button>
+
+          {isPanelOpen && (
+            <div className="px-4 pb-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSelectedCenter(ALL_CENTERS_VALUE)}
+                  className={`px-4 py-3 rounded-2xl text-lg font-black text-center transition-all ${
+                    selectedCenter === ALL_CENTERS_VALUE
+                      ? `bg-gradient-to-r ${theme.buttonGradient} text-white shadow-lg scale-105`
+                      : 'bg-white text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  كل المراكز
+                </button>
+                {centerFilterOptions!.map((center) => (
+                  <button
+                    key={center}
+                    type="button"
+                    onClick={() => setSelectedCenter(center)}
+                    className={`px-4 py-3 rounded-2xl text-base font-black text-center transition-all ${
+                      center === selectedCenter
+                        ? `bg-gradient-to-r ${theme.buttonGradient} text-white shadow-lg scale-105`
+                        : 'bg-white text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    {center}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <textarea

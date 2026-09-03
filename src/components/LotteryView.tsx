@@ -2,8 +2,7 @@ import React, {
   useState,
   useEffect,
   useRef,
-  useCallback,
-  useMemo
+  useCallback
 } from 'react';
 import { Participant, ColorTheme } from '../types/lottery';
 import { getThemeClasses } from '../config/lotteryConfig';
@@ -18,7 +17,7 @@ interface LotteryViewProps {
   title: string;
   subtitle?: string;
   enableNasheed: boolean;
-  centerFilterOptions?: string[];
+  drawCenterLabel?: string;
 }
 
 const ITEM_HEIGHT = 75;
@@ -49,7 +48,7 @@ const LotteryView: React.FC<LotteryViewProps> = ({
   title,
   subtitle,
   enableNasheed,
-  centerFilterOptions
+  drawCenterLabel
 }) => {
   const theme = getThemeClasses(colorTheme);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -58,11 +57,6 @@ const LotteryView: React.FC<LotteryViewProps> = ({
   const [displayList, setDisplayList] = useState<Participant[]>([]);
   const [isNasheedPlaying, setIsNasheedPlaying] = useState(false);
 
-  // Center filter state (only used when centerFilterOptions is provided)
-  const hasCenterFilter = !!centerFilterOptions && centerFilterOptions.length > 0;
-  const [selectedCenter, setSelectedCenter] = useState<string>('all');
-  const [isPanelOpen, setIsPanelOpen] = useState(true);
-
   const reelRef = useRef<HTMLDivElement>(null);
   const lastOffsetRef = useRef(0);
 
@@ -70,16 +64,10 @@ const LotteryView: React.FC<LotteryViewProps> = ({
   const applauseRef = useRef<HTMLAudioElement | null>(null);
   const nasheedRef = useRef<HTMLAudioElement | null>(null);
 
-  // Derived filtered participants based on selected center (no duplication)
-  const filteredParticipants = useMemo(() => {
-    if (!hasCenterFilter || selectedCenter === 'all') return participants;
-    return participants.filter(p => p.center === selectedCenter);
-  }, [participants, selectedCenter, hasCenterFilter]);
-
   useEffect(() => {
-    if (!filteredParticipants.length) return;
+    if (!participants.length) return;
 
-    const shuffled = shuffleArray(filteredParticipants);
+    const shuffled = shuffleArray(participants);
     const LOOPS = 12;
     const list: Participant[] = [];
 
@@ -88,23 +76,10 @@ const LotteryView: React.FC<LotteryViewProps> = ({
     }
 
     setDisplayList(list);
-  }, [filteredParticipants]);
-
-  // Reset draw state when selected center changes (prevents cross-center mixing)
-  const handleCenterSelect = (center: string) => {
-    if (center === selectedCenter) return;
-    setSelectedCenter(center);
-    setWinner(null);
-    setShowWinner(false);
-    setIsSpinning(false);
-    lastOffsetRef.current = 0;
-    if (reelRef.current) {
-      reelRef.current.style.transform = 'translateY(0px)';
-    }
-  };
+  }, [participants]);
 
   const spin = useCallback(() => {
-    if (isSpinning || filteredParticipants.length === 0) return;
+    if (isSpinning || participants.length === 0) return;
 
     setIsSpinning(true);
     setShowWinner(false);
@@ -121,7 +96,7 @@ const LotteryView: React.FC<LotteryViewProps> = ({
       }
     }
 
-    const shuffled = shuffleArray(filteredParticipants);
+    const shuffled = shuffleArray(participants);
     const winnerIndex = secureRandomInt(shuffled.length);
     const selectedWinner = shuffled[winnerIndex];
 
@@ -162,12 +137,10 @@ const LotteryView: React.FC<LotteryViewProps> = ({
     };
 
     requestAnimationFrame(animate);
-  }, [isSpinning, filteredParticipants, displayList]);
+  }, [isSpinning, participants, displayList]);
 
-  const activeCentersCount = new Set(filteredParticipants.map(p => p.center)).size;
-  const activeParticipantsCount = filteredParticipants.length;
-
-  const selectedCenterLabel = selectedCenter === 'all' ? 'كل المراكز' : selectedCenter;
+  const activeCentersCount = new Set(participants.map(p => p.center)).size;
+  const activeParticipantsCount = participants.length;
 
   return (
     <div
@@ -182,6 +155,14 @@ const LotteryView: React.FC<LotteryViewProps> = ({
         <div className="mt-4">
           <h1 className="text-4xl font-black text-white">{title}</h1>
           {subtitle && <h2 className="text-3xl font-black text-white text-center mt-1">{subtitle}</h2>}
+          {drawCenterLabel && (
+            <div className="mt-2 flex items-center gap-3">
+              <span className="text-white/90 text-xl font-bold drop-shadow-md">السحب في:</span>
+              <span className="bg-white/90 text-emerald-900 px-5 py-1 rounded-full text-xl font-black shadow-lg border-2 border-emerald-400">
+                {drawCenterLabel}
+              </span>
+            </div>
+          )}
         </div>
         <img
           src={`${base}new-logo.png`}
@@ -198,72 +179,6 @@ const LotteryView: React.FC<LotteryViewProps> = ({
           <div className="text-xl md:text-2xl font-bold mt-2 opacity-90 drop-shadow-md">
             نسأل الله أن يكتبها نصيبًا مباركًا للفائز
           </div>
-        </div>
-      )}
-
-      {hasCenterFilter && (
-        <div className="w-full max-w-7xl px-10 mb-6 z-10">
-          <div className="flex items-center justify-between w-full bg-white/25 backdrop-blur-md rounded-3xl border border-white/40 px-6 py-4 shadow-xl">
-            <button
-              onClick={() => setIsPanelOpen(!isPanelOpen)}
-              className="flex items-center gap-3 text-white text-2xl font-black drop-shadow-lg"
-            >
-              <span className={`inline-block transition-transform duration-300 ${isPanelOpen ? '' : '-rotate-90'}`}>▼</span>
-              اختيار المركز
-            </button>
-            {!isPanelOpen && (
-              <div className="flex items-center gap-3">
-                <span className="text-white/90 text-lg font-bold">السحب في:</span>
-                <span className="bg-white text-emerald-900 px-4 py-1 rounded-full text-lg font-black">
-                  {selectedCenterLabel}
-                </span>
-              </div>
-            )}
-            <img
-              src={`${base}new-logo.png`}
-              alt="القرآن يجمعنا"
-              className="w-12 h-12 object-contain"
-            />
-          </div>
-
-          {isPanelOpen && (
-            <div className="mt-2 bg-white/25 backdrop-blur-md rounded-3xl border border-white/40 p-5 shadow-xl">
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                <button
-                  onClick={() => handleCenterSelect('all')}
-                  className={`px-4 py-3 rounded-2xl text-lg font-black text-center transition-all ${
-                    selectedCenter === 'all'
-                      ? 'bg-white text-emerald-900 shadow-lg scale-105 border-2 border-emerald-400'
-                      : 'bg-white/60 text-white hover:bg-white/80'
-                  }`}
-                >
-                  كل المراكز
-                </button>
-                {centerFilterOptions!.map((center) => (
-                  <button
-                    key={center}
-                    onClick={() => handleCenterSelect(center)}
-                    className={`px-4 py-3 rounded-2xl text-base font-black text-center transition-all ${
-                      center === selectedCenter
-                        ? 'bg-white text-emerald-900 shadow-lg scale-105 border-2 border-emerald-400'
-                        : 'bg-white/60 text-white hover:bg-white/80'
-                    }`}
-                  >
-                    {center}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {isPanelOpen && (
-            <div className="mt-3 flex items-center justify-center gap-3 text-white drop-shadow-lg">
-              <span className="text-xl font-black">السحب في:</span>
-              <span className="bg-white/90 text-emerald-900 px-6 py-2 rounded-full text-2xl font-black shadow-lg border-2 border-emerald-400">
-                {selectedCenterLabel}
-              </span>
-            </div>
-          )}
         </div>
       )}
 
