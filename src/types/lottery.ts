@@ -1,6 +1,6 @@
-export type LotteryId = 'umrah' | 'male-prizes' | 'female-prizes' | 'teacher-lottery';
+export type LotteryId = 'umrah' | 'male-prizes' | 'female-prizes' | 'teacher-lottery' | 'story-umrah';
 
-export type ColorTheme = 'emerald' | 'blue' | 'purple' | 'orange';
+export type ColorTheme = 'emerald' | 'blue' | 'purple' | 'orange' | 'rose';
 
 export interface LotteryConfig {
   id: LotteryId;
@@ -12,6 +12,7 @@ export interface LotteryConfig {
   storageKey: string;
   enableNasheed: boolean;
   centerFilterOptions?: string[];
+  logoImage?: string;
 }
 
 export interface Participant {

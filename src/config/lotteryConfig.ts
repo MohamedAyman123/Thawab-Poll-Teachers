@@ -43,6 +43,15 @@ export const LOTTERY_CONFIGS: Record<LotteryId, LotteryConfig> = {
       'جمعية علوم القرآن بالكوبانية',
     ],
   },
+  'story-umrah': {
+    id: 'story-umrah',
+    nameAr: 'قصة تستحق عمرة',
+    nameEn: 'A Story Deserves Umrah',
+    colorTheme: 'rose',
+    storageKey: 'thawab_lottery_story_umrah',
+    enableNasheed: true,
+    logoImage: 'logo.png',
+  },
 };
 
 export const LOTTERY_IDS: LotteryId[] = [
@@ -50,7 +59,10 @@ export const LOTTERY_IDS: LotteryId[] = [
   'male-prizes',
   'female-prizes',
   'teacher-lottery',
+  'story-umrah',
 ];
+
+export const DEFAULT_LOGO_IMAGE = 'new-logo.png';
 
 export interface ThemeClasses {
   setupBg: string;
@@ -188,6 +200,33 @@ export const THEME_CLASSES: Record<ColorTheme, ThemeClasses> = {
     spinnerText: 'text-orange-300 text-3xl font-black',
     reelItemText: 'text-3xl font-black text-orange-950/80',
     reelItemCenter: 'text-[8px] font-bold text-orange-950',
+  },
+  rose: {
+    setupBg: 'bg-rose-50/95 backdrop-blur-md p-8 rounded-[2.5rem] shadow-2xl w-full max-w-3xl border border-rose-200 mx-auto mt-8',
+    setupBorder: 'border-rose-200',
+    titleText: 'text-4xl font-black text-rose-900 tracking-tighter',
+    subtitleText: 'text-xl font-bold text-rose-700 mt-2',
+    infoBg: 'bg-rose-100/50 p-4 rounded-2xl mb-6 text-sm text-rose-800 leading-relaxed border border-rose-200/50',
+    infoBorder: 'border-rose-200/50',
+    infoTitleText: 'font-bold mb-2 text-rose-900',
+    infoCodeText: 'block bg-white/50 p-2 rounded-lg text-xs font-mono text-rose-700',
+    textareaBorder: 'border-2 border-rose-100 rounded-3xl focus:border-rose-500 focus:ring-0',
+    textareaFocus: 'focus:border-rose-500',
+    buttonGradient: 'from-rose-600 to-pink-600',
+    buttonHoverGradient: 'hover:from-rose-700 hover:to-pink-700',
+    tabActive: 'bg-rose-600 text-white shadow-lg',
+    tabInactive: 'bg-rose-50/80 text-rose-900 hover:bg-rose-100',
+    centersBadge: 'bg-rose-100 text-rose-800 px-4 py-2 rounded-full text-lg font-black shadow-md',
+    spinButton: 'w-40 h-40 rounded-full bg-gradient-to-br from-rose-500 to-rose-700 text-white font-black text-4xl shadow-2xl border-4 border-white/30 hover:scale-105 transition-transform disabled:opacity-40 flex items-center justify-center',
+    revealButton: 'w-40 h-40 rounded-full bg-gradient-to-br from-rose-800 to-rose-950 text-white font-black text-4xl shadow-2xl border-4 border-white/20 hover:scale-105 transition-transform disabled:opacity-40 flex items-center justify-center',
+    backText: 'text-rose-700 font-bold text-xs',
+    nasheedButton: 'mt-2 px-5 py-2 rounded-full bg-white/80 text-rose-900 font-black shadow-lg hover:scale-105 transition-transform',
+    reelBorder: 'border-rose-500',
+    winnerText: 'text-4xl md:text-5xl font-black text-rose-900',
+    winnerCenterText: 'text-2xl md:text-3xl font-black text-rose-700 mt-2',
+    spinnerText: 'text-rose-300 text-3xl font-black',
+    reelItemText: 'text-3xl font-black text-rose-950/80',
+    reelItemCenter: 'text-[8px] font-bold text-rose-950',
   },
 };
 

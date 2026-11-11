@@ -75,6 +75,7 @@ const LotteryPage: React.FC<LotteryPageProps> = ({ lotteryId }) => {
           title={headerTitle}
           subtitle={config.subtitleAr}
           centerFilterOptions={config.centerFilterOptions}
+          logoImage={config.logoImage}
         />
       ) : (
         <LotteryView
@@ -88,6 +89,7 @@ const LotteryPage: React.FC<LotteryPageProps> = ({ lotteryId }) => {
           subtitle={config.subtitleAr}
           enableNasheed={config.enableNasheed}
           drawCenterLabel={drawCenterLabel}
+          logoImage={config.logoImage}
         />
       )}
     </div>

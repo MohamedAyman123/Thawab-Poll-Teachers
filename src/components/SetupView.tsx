@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Participant, ColorTheme } from '../types/lottery';
-import { getThemeClasses } from '../config/lotteryConfig';
+import { getThemeClasses, DEFAULT_LOGO_IMAGE } from '../config/lotteryConfig';
 
 interface SetupViewProps {
   onStart: (participants: Participant[], center: string) => void;
@@ -9,11 +9,12 @@ interface SetupViewProps {
   title: string;
   subtitle?: string;
   centerFilterOptions?: string[];
+  logoImage?: string;
 }
 
 const ALL_CENTERS_VALUE = 'all';
 
-const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, colorTheme, title, subtitle, centerFilterOptions }) => {
+const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, colorTheme, title, subtitle, centerFilterOptions, logoImage }) => {
   const theme = getThemeClasses(colorTheme);
   const hasCenterFilter = !!centerFilterOptions && centerFilterOptions.length > 0;
   const [inputValue, setInputValue] = useState('');
@@ -78,7 +79,11 @@ const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, col
         </div>
         <div className="w-24 h-24 relative flex items-center justify-center">
            <div className="flex flex-col items-center">
-            <img src={`${import.meta.env.BASE_URL}new-logo.png`} alt="Logo" className="w-16 h-16 mb-1" />
+            <img
+              src={`${import.meta.env.BASE_URL}${logoImage || DEFAULT_LOGO_IMAGE}`}
+              alt="Logo"
+              className="w-16 h-16 mb-1 object-contain"
+            />
            </div>
         </div>
       </div>

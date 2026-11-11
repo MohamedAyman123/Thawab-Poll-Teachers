@@ -5,7 +5,7 @@ import React, {
   useCallback
 } from 'react';
 import { Participant, ColorTheme } from '../types/lottery';
-import { getThemeClasses } from '../config/lotteryConfig';
+import { getThemeClasses, DEFAULT_LOGO_IMAGE } from '../config/lotteryConfig';
 
 const base = import.meta.env.BASE_URL;
 
@@ -20,6 +20,7 @@ interface LotteryViewProps {
   subtitle?: string;
   enableNasheed: boolean;
   drawCenterLabel?: string;
+  logoImage?: string;
 }
 
 const ITEM_HEIGHT = 75;
@@ -52,7 +53,8 @@ const LotteryView: React.FC<LotteryViewProps> = ({
   title,
   subtitle,
   enableNasheed,
-  drawCenterLabel
+  drawCenterLabel,
+  logoImage
 }) => {
   const theme = getThemeClasses(colorTheme);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -169,9 +171,9 @@ const LotteryView: React.FC<LotteryViewProps> = ({
           )}
         </div>
         <img
-          src={`${base}new-logo.png`}
-          alt="القرآن يجمعنا"
-          className="w-44 h-auto object-contain mt-6"
+          src={`${base}${logoImage || DEFAULT_LOGO_IMAGE}`}
+          alt="مؤسسة ثواب"
+          className="w-44 h-24 object-contain mt-6"
         />
       </div>
 
