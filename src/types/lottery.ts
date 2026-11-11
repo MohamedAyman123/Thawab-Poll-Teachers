@@ -13,11 +13,12 @@ export interface LotteryConfig {
   enableNasheed: boolean;
   centerFilterOptions?: string[];
   logoImage?: string;
+  namesOnly?: boolean;
 }
 
 export interface Participant {
   name: string;
-  center: string;
+  center?: string;
 }
 
 export type LotteryView = 'setup' | 'lottery';

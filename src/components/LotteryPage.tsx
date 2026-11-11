@@ -57,13 +57,16 @@ const LotteryPage: React.FC<LotteryPageProps> = ({ lotteryId }) => {
   };
 
   const headerTitle = config.headerNameAr || config.nameAr;
+  const namesOnly = !!config.namesOnly;
 
   // Participants used in the draw, filtered by the center chosen on setup
-  const drawParticipants = selectedCenter === 'all'
+  const drawParticipants = namesOnly || selectedCenter === 'all'
     ? participants
     : participants.filter(p => p.center === selectedCenter);
 
-  const drawCenterLabel = selectedCenter === 'all' ? 'كل المراكز' : selectedCenter;
+  const drawCenterLabel = namesOnly
+    ? undefined
+    : (selectedCenter === 'all' ? 'كل المراكز' : selectedCenter);
 
   return (
     <div className="min-h-screen pt-20">
@@ -76,6 +79,7 @@ const LotteryPage: React.FC<LotteryPageProps> = ({ lotteryId }) => {
           subtitle={config.subtitleAr}
           centerFilterOptions={config.centerFilterOptions}
           logoImage={config.logoImage}
+          namesOnly={namesOnly}
         />
       ) : (
         <LotteryView
@@ -83,13 +87,14 @@ const LotteryPage: React.FC<LotteryPageProps> = ({ lotteryId }) => {
           onBack={handleBackToSetup}
           onRemoveWinnerCenter={handleRemoveCenter}
           onRemoveWinner={handleRemoveWinner}
-          singleCenter={selectedCenter !== 'all'}
+          singleCenter={namesOnly || selectedCenter !== 'all'}
           colorTheme={config.colorTheme}
           title={headerTitle}
           subtitle={config.subtitleAr}
           enableNasheed={config.enableNasheed}
           drawCenterLabel={drawCenterLabel}
           logoImage={config.logoImage}
+          namesOnly={namesOnly}
         />
       )}
     </div>

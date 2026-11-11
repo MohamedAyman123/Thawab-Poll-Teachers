@@ -21,6 +21,7 @@ interface LotteryViewProps {
   enableNasheed: boolean;
   drawCenterLabel?: string;
   logoImage?: string;
+  namesOnly?: boolean;
 }
 
 const ITEM_HEIGHT = 75;
@@ -54,7 +55,8 @@ const LotteryView: React.FC<LotteryViewProps> = ({
   subtitle,
   enableNasheed,
   drawCenterLabel,
-  logoImage
+  logoImage,
+  namesOnly
 }) => {
   const theme = getThemeClasses(colorTheme);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -193,9 +195,11 @@ const LotteryView: React.FC<LotteryViewProps> = ({
           <span className="bg-red-50 text-red-600 px-4 py-2 rounded-full text-lg font-black shadow-md">
             الأسماء: {activeParticipantsCount}
           </span>
-          <span className={theme.centersBadge}>
-            المراكز المتبقية: {activeCentersCount}
-          </span>
+          {!namesOnly && (
+            <span className={theme.centersBadge}>
+              المراكز المتبقية: {activeCentersCount}
+            </span>
+          )}
         </div>
 
         {/* Left */}
@@ -239,7 +243,7 @@ const LotteryView: React.FC<LotteryViewProps> = ({
             {showWinner && winner ? (
               <div className="text-center winner-pop">
                 <div className={theme.winnerText}>{winner.name}</div>
-                <div className={theme.winnerCenterText}>{winner.center}</div>
+                {!namesOnly && <div className={theme.winnerCenterText}>{winner.center}</div>}
               </div>
             ) : (
               <span className={theme.spinnerText}>
@@ -256,7 +260,7 @@ const LotteryView: React.FC<LotteryViewProps> = ({
                   className="h-[75px] flex flex-col items-center justify-center opacity-50"
                 >
                   <span className={theme.reelItemText}>{p.name}</span>
-                  <span className={theme.reelItemCenter}>{p.center}</span>
+                  {!namesOnly && <span className={theme.reelItemCenter}>{p.center}</span>}
                 </div>
               ))}
             </div>

@@ -51,6 +51,7 @@ export const LOTTERY_CONFIGS: Record<LotteryId, LotteryConfig> = {
     storageKey: 'thawab_lottery_story_umrah',
     enableNasheed: true,
     logoImage: 'logo.png',
+    namesOnly: true,
   },
 };
 

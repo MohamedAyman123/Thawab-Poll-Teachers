@@ -10,11 +10,12 @@ interface SetupViewProps {
   subtitle?: string;
   centerFilterOptions?: string[];
   logoImage?: string;
+  namesOnly?: boolean;
 }
 
 const ALL_CENTERS_VALUE = 'all';
 
-const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, colorTheme, title, subtitle, centerFilterOptions, logoImage }) => {
+const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, colorTheme, title, subtitle, centerFilterOptions, logoImage, namesOnly }) => {
   const theme = getThemeClasses(colorTheme);
   const hasCenterFilter = !!centerFilterOptions && centerFilterOptions.length > 0;
   const [inputValue, setInputValue] = useState('');
@@ -23,10 +24,16 @@ const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, col
 
   useEffect(() => {
     if (initialParticipants.length > 0) {
+      if (namesOnly) {
+        setInputValue(initialParticipants.map(p => p.name).join('\n'));
+        return;
+      }
+
       const centersMap: Record<string, string[]> = {};
       initialParticipants.forEach(p => {
-        if (!centersMap[p.center]) centersMap[p.center] = [];
-        centersMap[p.center].push(p.name);
+        const key = p.center ?? '';
+        if (!centersMap[key]) centersMap[key] = [];
+        centersMap[key].push(p.name);
       });
 
       const text = Object.entries(centersMap)
@@ -34,35 +41,49 @@ const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, col
         .join('\n---\n');
       setInputValue(text);
     }
-  }, [initialParticipants]);
+  }, [initialParticipants, namesOnly]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const result: Participant[] = [];
-    const blocks = inputValue.split('---');
 
-    blocks.forEach(block => {
-      const lines = block.trim().split('\n').map(l => l.trim()).filter(l => l !== '');
-      if (lines.length > 0) {
-        let currentCenter = 'مركز غير معروف';
-        let startIndex = 0;
-        if (lines[0].startsWith('[') && lines[0].endsWith(']')) {
-          currentCenter = lines[0].substring(1, lines[0].length - 1);
-          startIndex = 1;
-        } else {
-          currentCenter = lines[0];
-          startIndex = 1;
-        }
+    if (namesOnly) {
+      inputValue
+        .split('\n')
+        .map(l => l.trim())
+        .filter(l => l !== '')
+        .forEach(name => result.push({ name }));
 
-        for (let i = startIndex; i < lines.length; i++) {
-          result.push({ name: lines[i], center: currentCenter });
-        }
+      if (result.length === 0) {
+        alert('يرجى إدخال الأسماء بشكل صحيح');
+        return;
       }
-    });
+    } else {
+      const blocks = inputValue.split('---');
 
-    if (result.length === 0) {
-      alert('يرجى إدخال المراكز والأسماء بشكل صحيح');
-      return;
+      blocks.forEach(block => {
+        const lines = block.trim().split('\n').map(l => l.trim()).filter(l => l !== '');
+        if (lines.length > 0) {
+          let currentCenter = 'مركز غير معروف';
+          let startIndex = 0;
+          if (lines[0].startsWith('[') && lines[0].endsWith(']')) {
+            currentCenter = lines[0].substring(1, lines[0].length - 1);
+            startIndex = 1;
+          } else {
+            currentCenter = lines[0];
+            startIndex = 1;
+          }
+
+          for (let i = startIndex; i < lines.length; i++) {
+            result.push({ name: lines[i], center: currentCenter });
+          }
+        }
+      });
+
+      if (result.length === 0) {
+        alert('يرجى إدخال المراكز والأسماء بشكل صحيح');
+        return;
+      }
     }
 
     onStart(result, selectedCenter);
@@ -75,7 +96,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, col
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className={theme.titleText}>{title}</h1>
-          <h2 className={theme.subtitleText}>{subtitle || 'إعداد المراكز'}</h2>
+          <h2 className={theme.subtitleText}>{subtitle || (namesOnly ? 'إعداد الأسماء' : 'إعداد المراكز')}</h2>
         </div>
         <div className="w-24 h-24 relative flex items-center justify-center">
            <div className="flex flex-col items-center">
@@ -91,10 +112,20 @@ const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, col
       <div className={theme.infoBg}>
         <p className={theme.infoTitleText}>طريقة الإدخال:</p>
         <code className={theme.infoCodeText}>
-          [اسم المركز]<br/>
-          الاسم الأول<br/>
-          الاسم الثاني<br/>
-          ---
+          {namesOnly ? (
+            <>
+              الاسم الأول<br/>
+              الاسم الثاني<br/>
+              الاسم الثالث<br/>
+            </>
+          ) : (
+            <>
+              [اسم المركز]<br/>
+              الاسم الأول<br/>
+              الاسم الثاني<br/>
+              ---
+            </>
+          )}
         </code>
       </div>
 
@@ -151,7 +182,7 @@ const SetupView: React.FC<SetupViewProps> = ({ onStart, initialParticipants, col
       <form onSubmit={handleSubmit} className="space-y-6">
         <textarea
           className={`w-full h-80 p-6 ${theme.textareaBorder} transition-all text-right resize-none font-medium text-lg shadow-inner bg-white/80`}
-          placeholder="اكتب المراكز والأسماء هنا..."
+          placeholder={namesOnly ? 'اكتب الأسماء هنا...' : 'اكتب المراكز والأسماء هنا...'}
           dir="rtl"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
